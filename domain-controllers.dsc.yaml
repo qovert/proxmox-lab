@@ -1,0 +1,93 @@
+# DSC v3 Domain Controller Configuration
+# This configuration sets up two domain controllers
+
+metadata:
+  version: "1.0.0"
+  description: "Configure two domain controllers for Active Directory"
+  author: "DSC Administrator"
+
+parameters:
+  # First Domain Controller Configuration
+  primaryDCName:
+    type: string
+    default: "DC01"
+    description: "Name of the primary domain controller"
+  
+  secondaryDCName:
+    type: string
+    default: "DC02"
+    description: "Name of the secondary domain controller"
+  
+  domainName:
+    type: string
+    default: "contoso.local"
+    description: "FQDN of the Active Directory domain"
+  
+  netbiosName:
+    type: string
+    default: "CONTOSO"
+    description: "NetBIOS name of the domain"
+  
+  safeModePassword:
+    type: securestring
+    description: "Directory Services Restore Mode password"
+  
+  domainAdminUsername:
+    type: string
+    default: "Administrator"
+    description: "Domain administrator username"
+  
+  domainAdminPassword:
+    type: securestring
+    description: "Domain administrator password"
+
+resources:
+  # Primary Domain Controller Configuration
+  - name: ConfigurePrimaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "[parameters('primaryDCName')]"
+      DomainName: "[parameters('domainName')]"
+      NetBIOSName: "[parameters('netbiosName')]"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      Role: "PrimaryDomainController"
+      CreateNewForest: true
+      ForestMode: "WinThreshold"
+      DomainMode: "WinThreshold"
+      DatabasePath: "C:\\Windows\\NTDS"
+      LogPath: "C:\\Windows\\NTDS"
+      SysvolPath: "C:\\Windows\\SYSVOL"
+      InstallDNS: true
+    dependsOn: []
+
+  # Secondary Domain Controller Configuration
+  - name: ConfigureSecondaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "[parameters('secondaryDCName')]"
+      DomainName: "[parameters('domainName')]"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      DomainAdministratorCredential:
+        Username: "[parameters('domainAdminUsername')]"
+        Password: "[parameters('domainAdminPassword')]"
+      Role: "AdditionalDomainController"
+      CreateNewForest: false
+      DatabasePath: "C:\\Windows\\NTDS"
+      LogPath: "C:\\Windows\\NTDS"
+      SysvolPath: "C:\\Windows\\SYSVOL"
+      InstallDNS: true
+    dependsOn:
+      - ConfigurePrimaryDC
+
+outputs:
+  primaryDCStatus:
+    type: string
+    value: "[reference('ConfigurePrimaryDC').status]"
+  
+  secondaryDCStatus:
+    type: string
+    value: "[reference('ConfigureSecondaryDC').status]"
+  
+  domainFQDN:
+    type: string
+    value: "[parameters('domainName')]"

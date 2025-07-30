@@ -1,0 +1,48 @@
+# Example: Simple Two Domain Controller Setup
+# This configuration creates a new forest with two domain controllers
+
+metadata:
+  version: "1.0.0"
+  description: "Simple two DC setup for lab environment"
+
+parameters:
+  domainName:
+    type: string
+    default: "lab.local"
+  
+  safeModePassword:
+    type: securestring
+    default: "P@ssw0rd123!"
+  
+  domainAdminPassword:
+    type: securestring
+    default: "P@ssw0rd123!"
+
+resources:
+  - name: PrimaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "LAB-DC01"
+      DomainName: "[parameters('domainName')]"
+      NetBIOSName: "LAB"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      Role: "PrimaryDomainController"
+      CreateNewForest: true
+      ForestMode: "WinThreshold"
+      DomainMode: "WinThreshold"
+      InstallDNS: true
+
+  - name: SecondaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "LAB-DC02"
+      DomainName: "[parameters('domainName')]"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      DomainAdministratorCredential:
+        Username: "Administrator"
+        Password: "[parameters('domainAdminPassword')]"
+      Role: "AdditionalDomainController"
+      CreateNewForest: false
+      InstallDNS: true
+    dependsOn:
+      - PrimaryDC

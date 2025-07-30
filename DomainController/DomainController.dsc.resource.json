@@ -1,0 +1,122 @@
+{
+  "$schema": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/resource/manifest.json",
+  "type": "DomainController/DomainController",
+  "version": "1.0.0",
+  "description": "DSC v3 resource for configuring Active Directory Domain Controllers",
+  "tags": [
+    "ActiveDirectory",
+    "DomainController",
+    "Windows",
+    "Infrastructure"
+  ],
+  "get": {
+    "executable": "pwsh",
+    "args": [
+      "-NoLogo",
+      "-NonInteractive",
+      "-NoProfile",
+      "-Command",
+      "& './DomainController.ps1'",
+      "get"
+    ]
+  },
+  "set": {
+    "executable": "pwsh",
+    "args": [
+      "-NoLogo",
+      "-NonInteractive",
+      "-NoProfile",
+      "-Command",
+      "& './DomainController.ps1'",
+      "set"
+    ],
+    "input": "stdin"
+  },
+  "test": {
+    "executable": "pwsh",
+    "args": [
+      "-NoLogo",
+      "-NonInteractive",
+      "-NoProfile",
+      "-Command",
+      "& './DomainController.ps1'",
+      "test"
+    ],
+    "input": "stdin"
+  },
+  "schema": {
+    "embedded": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "ServerName": {
+        "type": "string",
+        "description": "Name of the server to configure as domain controller"
+      },
+      "DomainName": {
+        "type": "string",
+        "description": "Fully qualified domain name"
+      },
+      "NetBIOSName": {
+        "type": "string",
+        "description": "NetBIOS name of the domain (required for new forest)"
+      },
+      "SafeModeAdministratorPassword": {
+        "type": "string",
+        "description": "Directory Services Restore Mode password"
+      },
+      "Role": {
+        "type": "string",
+        "enum": ["PrimaryDomainController", "AdditionalDomainController"],
+        "description": "Role of the domain controller"
+      },
+      "CreateNewForest": {
+        "type": "boolean",
+        "description": "Whether to create a new forest"
+      },
+      "ForestMode": {
+        "type": "string",
+        "enum": ["Win2008", "Win2008R2", "Win2012", "Win2012R2", "WinThreshold"],
+        "description": "Forest functional level"
+      },
+      "DomainMode": {
+        "type": "string",
+        "enum": ["Win2008", "Win2008R2", "Win2012", "Win2012R2", "WinThreshold"],
+        "description": "Domain functional level"
+      },
+      "DatabasePath": {
+        "type": "string",
+        "description": "Path for AD database files"
+      },
+      "LogPath": {
+        "type": "string",
+        "description": "Path for AD log files"
+      },
+      "SysvolPath": {
+        "type": "string",
+        "description": "Path for SYSVOL folder"
+      },
+      "InstallDNS": {
+        "type": "boolean",
+        "description": "Whether to install DNS service"
+      },
+      "DomainAdministratorCredential": {
+        "type": "object",
+        "properties": {
+          "Username": {
+            "type": "string",
+            "description": "Domain administrator username"
+          },
+          "Password": {
+            "type": "string",
+            "description": "Domain administrator password"
+          }
+        },
+        "description": "Credentials for joining existing domain"
+      }
+    },
+    "required": ["ServerName", "DomainName", "SafeModeAdministratorPassword", "Role"],
+    "additionalProperties": false
+    }
+  }
+}

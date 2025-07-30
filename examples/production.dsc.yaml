@@ -1,0 +1,67 @@
+# Example: Production Two Domain Controller Setup
+# This configuration creates a production-ready environment with custom paths
+
+metadata:
+  version: "1.0.0"
+  description: "Production two DC setup with custom paths and security"
+
+parameters:
+  domainName:
+    type: string
+    default: "production.corp"
+  
+  netbiosName:
+    type: string
+    default: "PROD"
+  
+  safeModePassword:
+    type: securestring
+    description: "DSRM password - store securely"
+  
+  domainAdminPassword:
+    type: securestring
+    description: "Domain admin password - store securely"
+
+resources:
+  - name: ProductionPrimaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "PROD-DC01"
+      DomainName: "[parameters('domainName')]"
+      NetBIOSName: "[parameters('netbiosName')]"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      Role: "PrimaryDomainController"
+      CreateNewForest: true
+      ForestMode: "WinThreshold"
+      DomainMode: "WinThreshold"
+      DatabasePath: "D:\\NTDS\\Database"
+      LogPath: "E:\\NTDS\\Logs"
+      SysvolPath: "D:\\SYSVOL"
+      InstallDNS: true
+
+  - name: ProductionSecondaryDC
+    type: DomainController/DomainController
+    properties:
+      ServerName: "PROD-DC02"
+      DomainName: "[parameters('domainName')]"
+      SafeModeAdministratorPassword: "[parameters('safeModePassword')]"
+      DomainAdministratorCredential:
+        Username: "PROD\\Administrator"
+        Password: "[parameters('domainAdminPassword')]"
+      Role: "AdditionalDomainController"
+      CreateNewForest: false
+      DatabasePath: "D:\\NTDS\\Database"
+      LogPath: "E:\\NTDS\\Logs"
+      SysvolPath: "D:\\SYSVOL"
+      InstallDNS: true
+    dependsOn:
+      - ProductionPrimaryDC
+
+outputs:
+  forestInformation:
+    type: object
+    value:
+      DomainName: "[parameters('domainName')]"
+      NetBIOSName: "[parameters('netbiosName')]"
+      PrimaryDC: "PROD-DC01"
+      SecondaryDC: "PROD-DC02"
