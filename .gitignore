@@ -1,0 +1,148 @@
+# DSC v3 Domain Controller Project .gitignore
+
+# Sensitive Configuration Files
+*.secrets.yaml
+*.secrets.yml
+*-secrets.*
+credentials.*
+passwords.*
+
+# PowerShell Sensitive Data
+*.credential
+*.securestring
+*.encrypted
+
+# DSC Runtime Files
+*.dsc.log
+*.dsc.cache
+dsc_cache/
+.dsc/
+
+# PowerShell Module Cache
+PSModuleCache/
+__pycache__/
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+coverage.xml
+*.cobertura.xml
+
+# Pester Test Results
+TestResults.xml
+*TestResults*.xml
+
+# PowerShell Transcripts
+PowerShell_transcript.*
+
+# Temporary Files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Build Artifacts
+bin/
+obj/
+build/
+dist/
+artifacts/
+
+# IDE and Editor Files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/.ropeproject
+*.swp
+*.swo
+*~
+.idea/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Windows Files
+*.lnk
+
+# Linux Files
+*~
+
+# Log Files
+*.log
+logs/
+*.log.*
+
+# Package Files
+*.nupkg
+*.zip
+*.tar.gz
+*.7z
+
+# Backup Files
+*.bak
+*.backup
+*-backup.*
+*.orig
+
+# Runtime Configuration (may contain sensitive data)
+appsettings.local.json
+config.local.yaml
+local.settings.json
+
+# Environment Files
+.env
+.env.local
+.env.production
+.env.development
+
+# Certificate Files (should not be in source control)
+*.pfx
+*.p12
+*.cer
+*.crt
+*.key
+*.pem
+certificates/
+
+# Active Directory Specific
+# (These would contain sensitive domain information)
+domain-config-*.yaml
+production-*.dsc.yaml
+*-production.*
+
+# Documentation Build
+docs/_build/
+site/
+
+# Azure DevOps
+.azure/
+
+# GitHub Actions (if using secrets)
+.github/workflows/*production*
+.github/workflows/*deploy*
+
+# Local Development Overrides
+local/
+*.local.*
+dev-*.yaml
+test-local-*.yaml
+
+# PowerShell Profile (may contain sensitive paths/credentials)
+Microsoft.PowerShell_profile.ps1
+profile.ps1
+
+# DSC Configuration State Files
+*.mof
+*.checksum
+localhost.meta.mof
+
+# Compiled PowerShell Modules
+*.psm1.compiled
